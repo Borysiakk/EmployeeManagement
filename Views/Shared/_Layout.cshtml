@@ -1,0 +1,62 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - EmployeeManagement</title>
+
+    <link rel="stylesheet" href="~/css/StyleMenu.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+<body>
+    <div id="wrapper" class="animate">
+        <nav class="navbar header-top fixed-top navbar-expand-lg navbar-dark bg-dark">
+            <span class="navbar-toggler-icon leftmenutrigger"></span>
+            <a class="navbar-brand" href="#">LOGO</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarText">
+                <ul class="navbar-nav animate side-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Employee" asp-action="Table" title="Tabele z pracownikami"><i class="fas fa-user"></i> Pracownicy <i class="fas fa-user shortmenu animate"></i></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Employee" asp-action="Add" title="Dodaj pracownika"><i class="far fa-calendar-plus"></i> Dodaj <i class="far fa-calendar-plus shortmenu animate"></i></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Event" asp-action="Table" title="Tabele z Wydarzeniami"><i class="fas fa-briefcase"></i> Wydarzenia <i class="fas fa-briefcase shortmenu animate"></i></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Event" asp-action="Add" title="Dodaj wydarzenie"><i class="far fa-calendar-alt"></i> Dodaj <i class="far fa-calendar-alt shortmenu animate"></i></a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ml-md-auto d-md-flex">
+                    <li class="nav-item">
+                        <a class="nav-link"><i class="fas fa-user"></i> Profile</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="auth" asp-action="logout"><i class="fas fa-key"></i> Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        @RenderBody()
+    </div>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('.leftmenutrigger').on('click', function (e) {
+                $('.side-nav').toggleClass("open");
+                $('#wrapper').toggleClass("open");
+                e.preventDefault();
+            });
+        });
+    </script>
+    <script defer src="https://use.fontawesome.com/releases/v5.7.2/js/all.js" integrity="sha384-0pzryjIRos8mFBWMzSSZApWtPl/5++eIfzYmTgBBmXYdhvxPc+XcFEk+zJwDgWbP" crossorigin="anonymous"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>
