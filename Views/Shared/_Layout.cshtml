@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Identity;
+@inject SignInManager<IdentityUser> signInManager;
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -6,7 +9,7 @@
     <title>@ViewData["Title"] - EmployeeManagement</title>
 
     <link rel="stylesheet" href="~/css/StyleMenu.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha512-MoRNloxbStBcD8z3M/2BmnT+rg4IsMxPkXaGh2zD6LGNNFE80W3onsAhRcMAMrSoyWL9xD7Ert0men7vR8LUZg==" crossorigin="anonymous" />
 </head>
 <body>
     <div id="wrapper" class="animate">
@@ -20,43 +23,76 @@
             <div class="collapse navbar-collapse" id="navbarText">
                 <ul class="navbar-nav animate side-nav">
                     <li class="nav-item">
-                        <a class="nav-link" asp-controller="Employee" asp-action="Table" title="Tabele z pracownikami"><i class="fas fa-user"></i> Pracownicy <i class="fas fa-user shortmenu animate"></i></a>
+                        <a class="nav-link" asp-controller="" asp-action="" title="Tabele z pracownikami"><i class="fas fa-user"></i> Pracownicy <i class="fas fa-user shortmenu animate"></i></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" asp-controller="Employee" asp-action="Add" title="Dodaj pracownika"><i class="far fa-calendar-plus"></i> Dodaj <i class="far fa-calendar-plus shortmenu animate"></i></a>
+                        <a class="nav-link" asp-controller="" asp-action="" title="Dodaj pracownika"><i class="far fa-calendar-plus"></i> Dodaj <i class="far fa-calendar-plus shortmenu animate"></i></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" asp-controller="Event" asp-action="Table" title="Tabele z Wydarzeniami"><i class="fas fa-briefcase"></i> Wydarzenia <i class="fas fa-briefcase shortmenu animate"></i></a>
+                        <a class="nav-link" asp-controller="" asp-action="" title="Tabele z Wydarzeniami"><i class="fas fa-briefcase"></i> Wydarzenia <i class="fas fa-briefcase shortmenu animate"></i></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" asp-controller="Event" asp-action="Add" title="Dodaj wydarzenie"><i class="far fa-calendar-alt"></i> Dodaj <i class="far fa-calendar-alt shortmenu animate"></i></a>
+                        <a class="nav-link" asp-controller="" asp-action="" title="Dodaj wydarzenie"><i class="far fa-calendar-alt"></i> Dodaj <i class="far fa-calendar-alt shortmenu animate"></i></a>
                     </li>
                 </ul>
                 <ul class="navbar-nav ml-md-auto d-md-flex">
+                    
+                    @if (signInManager.IsSignedIn(User))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-action="Logout" asp-controller="Account"><i class="fas fa-user"></i> Logout: @User.Identity.Name</a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <a id='showLogin' class="nav-link" ><i class="fas fa-user"></i> Login</a>
+                        </li>
+                        @* <a class="nav-link" asp-action="Register" asp-controller="Account"><i class="fas fa-user"></i> Rerestracja</a> *@
+                    }
+                    
                     <li class="nav-item">
                         <a class="nav-link"><i class="fas fa-user"></i> Profile</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" asp-controller="auth" asp-action="logout"><i class="fas fa-key"></i> Logout</a>
-                    </li>
                 </ul>
             </div>
-        </nav>
+        </nav> 
         @RenderBody()
-    </div>
-    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+        
+        <div id="viewLoginModal" class="modal fade in">
+            <div id="loginContainer">
 
-    <script>
-        $(document).ready(function () {
+            </div>
+        </div>
+        
+    </div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ajax-unobtrusive/3.2.6/jquery.unobtrusive-ajax.min.js" integrity="sha512-DedNBWPF0hLGUPNbCYfj8qjlEnNE92Fqn7xd3Sscfu7ipy7Zu33unHdugqRD3c4Vj7/yLv+slqZhMls/4Oc7Zg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha512-M5KW3ztuIICmVIhjSqXe01oV2bpe248gOxqmlcYrEzAvws7Pw3z6BK0iGbrwvdrUQUhi3eXgtxp5I8PDo9YfjQ==" crossorigin="anonymous"></script>
+<script defer src="https://use.fontawesome.com/releases/v5.7.2/js/all.js" integrity="sha384-0pzryjIRos8mFBWMzSSZApWtPl/5++eIfzYmTgBBmXYdhvxPc+XcFEk+zJwDgWbP" crossorigin="anonymous"></script>
+
+<script>
+        $(document).ready(function ()
+         {
             $('.leftmenutrigger').on('click', function (e) {
                 $('.side-nav').toggleClass("open");
                 $('#wrapper').toggleClass("open");
                 e.preventDefault();
-            });
+            })
         });
+        
+        $('#showLogin').click(function()
+         {
+            var url = '@Url.Action("Login","Account")';
+            $.get(url,function(data) 
+            {
+                $('#loginContainer').html(data);
+                $('#viewLoginModal').modal('show');
+            })
+         })
     </script>
-    <script defer src="https://use.fontawesome.com/releases/v5.7.2/js/all.js" integrity="sha384-0pzryjIRos8mFBWMzSSZApWtPl/5++eIfzYmTgBBmXYdhvxPc+XcFEk+zJwDgWbP" crossorigin="anonymous"></script>
-    @RenderSection("Scripts", required: false)
+@await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

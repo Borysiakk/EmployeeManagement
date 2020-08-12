@@ -3,10 +3,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace EmployeeManagement.Installer
 {
@@ -15,7 +11,7 @@ namespace EmployeeManagement.Installer
         public void InstallServices(IServiceCollection services, IConfiguration Configuration)
         {
             services.AddDbContext<EmployeeManagerContex>(options => options.UseSqlServer(Configuration.GetConnectionString("EmployeeManagmentDb")));
-            services.AddIdentity<IdentityEmployee, IdentityRole>(option =>
+            services.AddIdentity<IdentityUser, IdentityRole>(option =>
             {
                 option.Password.RequireNonAlphanumeric = false;
             }).AddEntityFrameworkStores<EmployeeManagerContex>();

@@ -1,0 +1,42 @@
+﻿@model EmployeeManagement.ViewModel.LoginViewModel
+
+<div class="modal-dialog" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">User Login</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form method="post" data-ajax="true" data-ajax-url="@Url.Action("Login","Account")" data-ajax-method="post" data-ajax-complete="completed" data-ajax-success="success" data-ajax-failure ="failure" data-ajax-update="#validation" data-backdrop="static">
+                <div id="validation" asp-validation-summary="All" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="User"></label>
+                    <input asp-for="User" class="form-control" />
+                    <span asp-validation-for="User" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Password"></label>
+                    <input asp-for="Password" class="form-control" />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+                <button type="submit" class="btn btn-primary" data-dismiss="static" >Login</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script>        
+        success = function(data)
+        {
+            if(data === "OK")
+            {
+                window.location  = '@Url.Action("Index","Home")';
+            }
+         
+        }
+    </script>
+}
