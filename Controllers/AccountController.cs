@@ -10,10 +10,10 @@ namespace EmployeeManagement.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
-        
-        public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
+        private readonly UserManager<IdentityEmployee> _userManager;
+        private readonly SignInManager<IdentityEmployee> _signInManager;
+
+        public AccountController(UserManager<IdentityEmployee> userManager, SignInManager<IdentityEmployee> signInManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -31,7 +31,7 @@ namespace EmployeeManagement.Controllers
 
             if (ModelState.IsValid)
             {
-                var user = new IdentityUser { UserName = model.User,Email = model.Email};
+                var user = new IdentityEmployee { UserName = model.User,Email = model.Email};
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
@@ -84,6 +84,13 @@ namespace EmployeeManagement.Controllers
         {
             await _signInManager.SignOutAsync();
             return RedirectToAction("Index","Home");
+        }
+
+
+        public async Task<IActionResult> Profile()
+        {
+            IdentityEmployee x = await _userManager.GetUserAsync(User);
+            return View(x);
         }
 
     }
