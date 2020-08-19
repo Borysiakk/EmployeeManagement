@@ -11,11 +11,18 @@ namespace EmployeeManagement.Installer
     {
         public void InstallServices(IServiceCollection services, IConfiguration Configuration)
         {
-            services.AddDbContext<EmployeeManagerContex>(options => options.UseSqlServer(Configuration.GetConnectionString("EmployeeManagmentDb")));
+            services.AddDbContext<EmployeeManagerContext>(options => options.UseSqlServer(Configuration.GetConnectionString("EmployeeManagmentDb")));
             services.AddIdentity<IdentityEmployee, IdentityRole>(option =>
             {
-                option.Password.RequireNonAlphanumeric = false;
-            }).AddEntityFrameworkStores<EmployeeManagerContex>();
+                option.Password.RequiredLength = 15;
+                option.Password.RequireNonAlphanumeric = true;
+                option.Password.RequireUppercase = false;
+                option.Password.RequireLowercase = false;
+                option.Password.RequireDigit = false;
+
+            }).AddEntityFrameworkStores<EmployeeManagerContext>();
+
+
         }
     }
 }

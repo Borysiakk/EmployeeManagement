@@ -1,49 +1,99 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
+using EmployeeManagement.Datebase;
 using EmployeeManagement.ViewModel;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json;
+
 
 namespace EmployeeManagement.Controllers
 {
     public class AccountController : Controller
     {
+        
+        private readonly List<string> _countries;
+        private readonly IHostEnvironment _environment;
+        private readonly EmployeeManagerContext _managerContext;
         private readonly UserManager<IdentityEmployee> _userManager;
         private readonly SignInManager<IdentityEmployee> _signInManager;
 
-        public AccountController(UserManager<IdentityEmployee> userManager, SignInManager<IdentityEmployee> signInManager)
+        public AccountController(UserManager<IdentityEmployee> userManager, SignInManager<IdentityEmployee> signInManager, EmployeeManagerContext managerContext, IConfiguration config, IHostEnvironment environment)
         {
+            _environment = environment;
             _userManager = userManager;
             _signInManager = signInManager;
+            _managerContext = managerContext;
+
+            HttpClient client = new HttpClient();
+            var data = client.GetAsync(config["Countries"]).Result.Content.ReadAsStringAsync().Result;
+            _countries = JsonConvert.DeserializeObject<Dictionary<string, string>>(data).Values.ToList();
+
         }
 
         [HttpGet]
         public IActionResult Register()
         {
-            return View();
+            RegisterViewModel model = new RegisterViewModel()
+            {
+                Id = Guid.NewGuid().ToString(),
+                Countries = _countries
+            };
+            
+            return View(model);
         }
         
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
-
             if (ModelState.IsValid)
             {
-                var user = new IdentityEmployee { UserName = model.User,Email = model.Email};
-                var result = await _userManager.CreateAsync(user, model.Password);
+                string fileName = model.Id + model.Photo.FileName.Substring(model.Photo.FileName.Length-4, 4);
+                
+                var user = new IdentityEmployee
+                {
+                    Age = model.Age,
+                    Name = model.Name,
+                    Email = model.Email,
+                    UserName = model.Id,
+                    Country = model.Country,
+                    Address = model.Address,
+                    PhoneNumber = model.Phone,
+                    LastName = model.LastName,
+                    Position = model.Position,
+                    ProfilePicture = fileName,
+                    IsFirstLogin = true
+                };
+                
+                var result = await _userManager.CreateAsync(user,user.Email );
                 if (result.Succeeded)
                 {
-                    await _signInManager.SignInAsync(user, false);
+                    if (model.Photo != null)
+                    {
+                        string uploadsFolder = Path.Combine(_environment.ContentRootPath, "Image");
+                        string filePath = Path.Combine(uploadsFolder, fileName);
+                        await using (var stream = new FileStream(filePath,FileMode.Create))
+                        {
+                            await model.Photo.CopyToAsync(stream);
+                        }
+                    }
                     return RedirectToAction("index", "Home");
                 }
-
+                
                 foreach (var error in result.Errors)
                 {
                     ModelState.AddModelError(string.Empty,error.Description);
                 }
             }
+
+            model.Countries = _countries;
             return View(model);
             
         }

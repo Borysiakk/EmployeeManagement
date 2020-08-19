@@ -5,34 +5,25 @@
 }
 
 <h1>Profile</h1>
-
-<div>
-    <h4>Employee</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.UserName)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.UserName)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.NormalizedUserName)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.NormalizedUserName)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Email)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Email)
-        </dd>
-
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.PhoneNumber)
-        </dt>
-    </dl>
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <div class="input-group mb-2">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1">Nazwa Użytkownika</span>
+                </div>
+                <input asp-for="UserName" type="text" class="form-control" placeholder="" aria-describedby="basic-addon1"/>
+            </div>
+        </div>
+        <div class="col">
+            <div class="input-group mb-2">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon2">Nazwa Użytkownika</span>
+                </div>
+                <input asp-for="Email" type="text" class="form-control" placeholder="" aria-describedby="basic-addon2"/>
+            </div>
+        </div>
+    </div>
 </div>
 <div>
     @* <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> | *@

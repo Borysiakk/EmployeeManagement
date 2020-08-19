@@ -1,42 +1,148 @@
-﻿@model EmployeeManagement.ViewModel.RegisterViewModel
+﻿@using System.Web.Mvc
+@model EmployeeManagement.ViewModel.RegisterViewModel
 
 @{
     ViewBag.Title = "title";
     Layout = "_Layout";
 }
 
-<h2>Rejestracja</h2>
+<div class="container">
+    <div class="col-md-10 mx-auto py-4">
+        <div class="card">
+            <div class="card-header bg-primary text-uppercase text-white"> <h4>Dodawanie Pracowników</h4></div>
+            <div class="card-body">
+                <form asp-controller="Account" asp-action="Register" enctype="multipart/form-data" method="post">
+                    <div asp-validation-summary="All"></div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="input-group mb-2">
+                                <div class="input-group-prepend"> <span class="input-group-text"><i class="far fa-address-card fa-fw"></i></span> </div>
+                                <input asp-for="Id" type="text" class="form-control" placeholder="" readonly/>
+                            </div>
+                        </div>
+                    </div>
 
+                    <div class="row">
+                        <div class="col">
+                            <div class="input-group mb-2">
+                                <div class="input-group-prepend"> <span class="input-group-text"> <i class="far fa-user fa-fw"></i> </span> </div>
+                                <input asp-for="Name" type="text" class="form-control" placeholder="Imie"/>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="input-group mb-2">
+                                <div class="input-group-prepend"> <span class="input-group-text"> <i class="far fa-user fa-fw"></i></span> </div>
+                                <input asp-for="LastName" type="text" class="form-control" placeholder="Nazwisko"/>
+                            </div>
+                        </div>
+                    </div>
 
-<div class="row">
-    <div class="col-md-12">
-        <form asp-controller="Account" asp-action="Register" method="post" >
-            <div asp-validation-summary="All"></div>
-            
-            <div class="form-group">
-                <label asp-for="User"></label>
-                <input asp-for="User" class="form-control"/>
-                <span asp-validation-for="User" class="text-danger"></span>
+                    <div class="row">
+                        <div class="col">
+                            <div class="input-group mb-2">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">
+                                        <i class="fas fa-envelope fa-fw"></i>
+                                    </span>
+                                </div>
+                                <input asp-for="Email" type="text" class="form-control " placeholder="Adres Email"/>
+                            </div>
+                        </div>
+
+                        <div class="col">
+                            <div class="input-group mb-2">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">
+                                        <i class="fas fa-phone fa-fw"></i>
+                                    </span>
+                                </div>
+                                <input asp-for="Phone" type="text" class="form-control" placeholder="Telefon"/>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col">
+                            <div class="input-group mb-2">
+                                <div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-globe-americas fa-fw"></i></span></div>
+                                <select class="selectpicker form-control" id="sectionCountries" asp-for="Country" data-live-search="true" data-live-search-style="begins">
+                                    @foreach (string country in Model.Countries)
+                                    {
+                                        <option>@country</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    
+                        <div class="col">
+                            <div class="input-group mb-2">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">
+                                        <i class="fas fa-home fa-fw"></i>
+                                    </span>
+                                </div>
+                                <input asp-for="Address" type="text" class="form-control" placeholder="Miejsce zamieszkania"/>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                    <div class="row">
+                        <div class="col">
+                            <div class="input-group mb-2">
+                                <div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-briefcase fa-fw"></i></span></div>
+                                <input asp-for="Position" type="text" class="form-control" placeholder="Pozycja"/>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="input-group mb-2">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">
+                                        <i class="far fa-calendar-alt fa-fw"></i>
+                                    </span>
+                                </div>
+                                <input asp-for="Age" type="date" class="form-control" placeholder=""/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col">
+                            <div class="input-group mb-2">
+                                <div class="custom-file">
+                                    <input asp-for="Photo" class="form-control custom-file-input"/>
+                                    <label asp-for="Photo" class="form-control custom-file-label"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="input-group mb-2">
+                                <button class="btn btn-success btn-lg btn-block" type="submit">Dodaj Pracownika</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                
             </div>
-            
-            <div class="form-group">
-                <label asp-for="Email"></label>
-                <input asp-for="Email" class="form-control"/>
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-            
-            <div class="form-group">
-                <label asp-for="Password"></label>
-                <input asp-for="Password" class="form-control"/>
-                <span asp-validation-for="Password" class="text-danger"></span>
-            </div>
-            
-            <div class="form-group">
-                <label asp-for="ConfirmPassword"></label>
-                <input asp-for="ConfirmPassword" class="form-control"/>
-                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-            </div>
-            <button type="submit" class="btn btn-primary">Register</button>
-        </form>
+
+        </div>
     </div>
 </div>
+
+@section Scripts
+{
+    <script>
+        $(document).ready(function ()
+        {
+
+        });
+        
+        $('.selectpicker').ready(function ()
+        {
+           $('.selectpicker').selectpicker('refresh'); 
+        });
+        
+</script>
+}

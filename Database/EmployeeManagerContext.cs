@@ -7,10 +7,12 @@ using EmployeeManagement.ViewModel;
 
 namespace EmployeeManagement.Datebase
 {
-    public class EmployeeManagerContex : IdentityDbContext
+    public class EmployeeManagerContext : IdentityDbContext
     {
+
+        public DbSet<Competition> Competition { get; set; }
         public DbSet<IdentityEmployee> Employee { get; set; }
-        public EmployeeManagerContex(DbContextOptions<EmployeeManagerContex> options) : base(options)
+        public EmployeeManagerContext(DbContextOptions<EmployeeManagerContext> options) : base(options)
         {
 
         }
