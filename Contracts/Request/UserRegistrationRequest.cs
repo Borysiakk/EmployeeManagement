@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 
-namespace EmployeeManagement.ViewModel
+namespace EmployeeManagement.Contracts.Request
 {
-    public class RegisterViewModel
+    public class UserRegistrationRequest
     {
         [Required]
         public string Id { get; set; }
@@ -23,7 +21,6 @@ namespace EmployeeManagement.ViewModel
         [Required]
         [DataType(DataType.EmailAddress)]
         public string Email { get; set; }
-        
         [DataType(DataType.PhoneNumber)]
         public string Phone { get; set; }
         public IFormFile Photo { get; set; }

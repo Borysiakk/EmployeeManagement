@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using EmployeeManagement.Service;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EmployeeManagement.Installer
@@ -8,6 +9,8 @@ namespace EmployeeManagement.Installer
         public void InstallServices(IServiceCollection services, IConfiguration Configuration)
         {
             services.AddControllersWithViews();
+            services.AddScoped<IAccountService, AccountService>();
+            
         }
     }
 }

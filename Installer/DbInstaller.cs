@@ -14,7 +14,6 @@ namespace EmployeeManagement.Installer
             services.AddDbContext<EmployeeManagerContext>(options => options.UseSqlServer(Configuration.GetConnectionString("EmployeeManagmentDb")));
             services.AddIdentity<IdentityEmployee, IdentityRole>(option =>
             {
-                option.Password.RequiredLength = 15;
                 option.Password.RequireNonAlphanumeric = true;
                 option.Password.RequireUppercase = false;
                 option.Password.RequireLowercase = false;

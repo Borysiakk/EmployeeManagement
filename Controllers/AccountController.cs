@@ -4,7 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using EmployeeManagement.Contracts.Request;
 using EmployeeManagement.Datebase;
+using EmployeeManagement.Service;
 using EmployeeManagement.ViewModel;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -17,18 +19,16 @@ namespace EmployeeManagement.Controllers
 {
     public class AccountController : Controller
     {
+        private readonly IAccountService _accountService;
         
         private readonly List<string> _countries;
-        private readonly IHostEnvironment _environment;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly EmployeeManagerContext _managerContext;
-        private readonly UserManager<IdentityEmployee> _userManager;
-        private readonly SignInManager<IdentityEmployee> _signInManager;
 
-        public AccountController(UserManager<IdentityEmployee> userManager, SignInManager<IdentityEmployee> signInManager, EmployeeManagerContext managerContext, IConfiguration config, IHostEnvironment environment)
+        public AccountController(EmployeeManagerContext managerContext, IConfiguration config, RoleManager<IdentityRole> roleManager, IAccountService accountService)
         {
-            _environment = environment;
-            _userManager = userManager;
-            _signInManager = signInManager;
+            _roleManager = roleManager;
+            _accountService = accountService;
             _managerContext = managerContext;
 
             HttpClient client = new HttpClient();
@@ -38,9 +38,38 @@ namespace EmployeeManagement.Controllers
         }
 
         [HttpGet]
+        public IActionResult Login()
+        {
+            return View("_Login");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Login(UserLoginRequests model)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _accountService.LoginAsync(model);
+                
+                if (result.Success) return Json("OK");
+
+                foreach (var error in result.Error)
+                {
+                    ModelState.AddModelError(string.Empty,error);
+                }
+            }
+
+            return Json(new 
+            {
+                succes = false,
+                errors = string.Join("; ", ModelState.Values.SelectMany(x => x.Errors).Select(x => x.ErrorMessage)),
+            });
+        }
+
+        [HttpGet]
         public IActionResult Register()
         {
-            RegisterViewModel model = new RegisterViewModel()
+            UserRegistrationRequest model = new UserRegistrationRequest()
             {
                 Id = Guid.NewGuid().ToString(),
                 Countries = _countries
@@ -51,95 +80,38 @@ namespace EmployeeManagement.Controllers
         
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(RegisterViewModel model)
+        public async Task<IActionResult> Register(UserRegistrationRequest model)
         {
             if (ModelState.IsValid)
             {
-                string fileName = model.Id + model.Photo.FileName.Substring(model.Photo.FileName.Length-4, 4);
-                
-                var user = new IdentityEmployee
-                {
-                    Age = model.Age,
-                    Name = model.Name,
-                    Email = model.Email,
-                    UserName = model.Id,
-                    Country = model.Country,
-                    Address = model.Address,
-                    PhoneNumber = model.Phone,
-                    LastName = model.LastName,
-                    Position = model.Position,
-                    ProfilePicture = fileName,
-                    IsFirstLogin = true
-                };
-                
-                var result = await _userManager.CreateAsync(user,user.Email );
-                if (result.Succeeded)
-                {
-                    if (model.Photo != null)
-                    {
-                        string uploadsFolder = Path.Combine(_environment.ContentRootPath, "Image");
-                        string filePath = Path.Combine(uploadsFolder, fileName);
-                        await using (var stream = new FileStream(filePath,FileMode.Create))
-                        {
-                            await model.Photo.CopyToAsync(stream);
-                        }
-                    }
-                    return RedirectToAction("index", "Home");
-                }
-                
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError(string.Empty,error.Description);
-                }
+               var result = await _accountService.RegisterAsync(model);
+               
+               if (result.Success)
+               {
+                   return RedirectToAction("index", "Home");
+               }
+               
+               foreach (var error in result.Error)
+               {
+                   ModelState.AddModelError(string.Empty,error);
+               }
             }
 
             model.Countries = _countries;
             return View(model);
             
         }
-        [HttpGet]
-        public IActionResult Login()
-        {
-            return View("_Login");
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                var result = await _signInManager.PasswordSignInAsync(model.User, model.Password, model.RememberMe, false);
-                if (result.Succeeded)
-                {
-                    return Json("OK");
-                }
-                else
-                {
-                    return Json("Incorrect login or password!");
-                }
-            }
-            else
-            {
-                return Json(new
-                {
-                    succes = false,
-                    errors = string.Join("; ", ModelState.Values.SelectMany(x => x.Errors).Select(x => x.ErrorMessage)),
-                });
-                
-            }
-        }
 
         public async Task<IActionResult> Logout()
         {
-            await _signInManager.SignOutAsync();
+            await _accountService.LogoutAsync();
             return RedirectToAction("Index","Home");
         }
 
 
         public async Task<IActionResult> Profile()
         {
-            IdentityEmployee x = await _userManager.GetUserAsync(User);
+            IdentityEmployee x = new IdentityEmployee();
             return View(x);
         }
 

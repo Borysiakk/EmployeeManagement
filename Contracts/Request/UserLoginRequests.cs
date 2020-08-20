@@ -1,16 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace EmployeeManagement.ViewModel
+namespace EmployeeManagement.Contracts.Request
 {
-    public class LoginViewModel
+    public class UserLoginRequests
     {
         [Required]
         public string User { get; set; }
-        
         [Required]
         [DataType(DataType.Password)]
         public string Password { get; set; }
-        
         [Display(Name="Zapamietaj mnie")]
         public bool RememberMe { get; set; }
     }
