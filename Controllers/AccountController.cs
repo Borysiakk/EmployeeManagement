@@ -1,40 +1,36 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
+using Newtonsoft.Json;
 using System.Net.Http;
 using System.Threading.Tasks;
-using EmployeeManagement.Contracts.Request;
+using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using EmployeeManagement.Datebase;
 using EmployeeManagement.Service;
 using EmployeeManagement.ViewModel;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
-using Newtonsoft.Json;
+using EmployeeManagement.Contracts.Request;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace EmployeeManagement.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly IAccountService _accountService;
         
-        private readonly List<string> _countries;
-        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IEnumerable<string> _countries;
+        private readonly IAccountService _accountService;
         private readonly EmployeeManagerContext _managerContext;
 
-        public AccountController(EmployeeManagerContext managerContext, IConfiguration config, RoleManager<IdentityRole> roleManager, IAccountService accountService)
+        public AccountController(EmployeeManagerContext managerContext, IConfiguration config, IAccountService accountService)
         {
-            _roleManager = roleManager;
             _accountService = accountService;
             _managerContext = managerContext;
 
             HttpClient client = new HttpClient();
             var data = client.GetAsync(config["Countries"]).Result.Content.ReadAsStringAsync().Result;
-            _countries = JsonConvert.DeserializeObject<Dictionary<string, string>>(data).Values.ToList();
-
+            _countries = JsonConvert.DeserializeObject<Dictionary<string, string>>(data).Values;
+            
         }
 
         [HttpGet]
@@ -67,12 +63,13 @@ namespace EmployeeManagement.Controllers
         }
 
         [HttpGet]
+        //[Authorize(Roles = "Administrator")]
         public IActionResult Register()
         {
             UserRegistrationRequest model = new UserRegistrationRequest()
             {
+                Countries = _countries,
                 Id = Guid.NewGuid().ToString(),
-                Countries = _countries
             };
             
             return View(model);
@@ -96,7 +93,6 @@ namespace EmployeeManagement.Controllers
                    ModelState.AddModelError(string.Empty,error);
                }
             }
-
             model.Countries = _countries;
             return View(model);
             
@@ -109,6 +105,7 @@ namespace EmployeeManagement.Controllers
         }
 
 
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Profile()
         {
             IdentityEmployee x = new IdentityEmployee();

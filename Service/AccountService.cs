@@ -13,14 +13,16 @@ namespace EmployeeManagement.Service
     public class AccountService :IAccountService
     {
         private readonly IHostEnvironment _environment;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly UserManager<IdentityEmployee> _userManager;
         private readonly SignInManager<IdentityEmployee> _signInManager;
         
-        public AccountService(UserManager<IdentityEmployee> userManager, SignInManager<IdentityEmployee> signInManager, IHostEnvironment environment)
+        public AccountService(UserManager<IdentityEmployee> userManager, SignInManager<IdentityEmployee> signInManager, IHostEnvironment environment, RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
-            _signInManager = signInManager;
             _environment = environment;
+            _roleManager = roleManager;
+            _signInManager = signInManager;
         }
 
         public async Task LogoutAsync()
@@ -62,7 +64,7 @@ namespace EmployeeManagement.Service
                     Error = new[] {"Adres email istnieje juz w bazie danych"}
                 };
             }
-            
+
             var user = new IdentityEmployee
             {
                 IsFirstLogin = true,
@@ -70,7 +72,7 @@ namespace EmployeeManagement.Service
                 Age = request.Age,
                 Name = request.Name,
                 Email = request.Email,
-                UserName = request.Id,
+                UserName = request.Email,
                 Country = request.Country,
                 Address = request.Address,
                 PhoneNumber = request.Phone,
@@ -93,6 +95,8 @@ namespace EmployeeManagement.Service
                         await request.Photo.CopyToAsync(stream);
                     }
                 }
+
+                await _userManager.AddToRoleAsync(user, request.Permissions);
                 
                 return new UniversalResult() { Success = true };
             }

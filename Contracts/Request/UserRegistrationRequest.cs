@@ -23,7 +23,9 @@ namespace EmployeeManagement.Contracts.Request
         public string Email { get; set; }
         [DataType(DataType.PhoneNumber)]
         public string Phone { get; set; }
+        [Required]
+        public string Permissions { get; set; }
         public IFormFile Photo { get; set; }
-        public List<string> Countries { get; set; }
+        public IEnumerable<string> Countries { get; set; }
     }
 }

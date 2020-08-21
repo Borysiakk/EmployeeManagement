@@ -1,6 +1,17 @@
 ﻿@using Microsoft.AspNetCore.Identity;
-@inject SignInManager<EmployeeManagement.ViewModel.IdentityEmployee> signInManager;
+@using EmployeeManagement.ViewModel
 
+@inject SignInManager<IdentityEmployee> signInManager
+@inject UserManager<IdentityEmployee> userManager
+
+@{
+    IList<string> role = new List<string>();
+    var user = await userManager.GetUserAsync(User);
+    if (user != null)
+    {
+        role = await userManager.GetRolesAsync(user);
+    }
+}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -50,13 +61,18 @@
                         <li class="nav-item">
                             <a class="nav-link" asp-action="Logout" asp-controller="Account"><i class="fas fa-user"></i> Logout: @User.Identity.Name</a>
                         </li>
+                        
+                        @if (role[0] == "Administrator")
+                        {
+                            <a class="nav-link" asp-action="Register" asp-controller="Account"><i class="fas fa-user"></i> Rerestracja</a> 
+                        }
                     }
                     else
                     {
                         <li class="nav-item">
                             <a id='showLogin' class="nav-link"><i class="fas fa-user"></i> Login</a>
                         </li>
-                        <a class="nav-link" asp-action="Register" asp-controller="Account"><i class="fas fa-user"></i> Rerestracja</a>
+                        //<a class="nav-link" asp-action="Register" asp-controller="Account"><i class="fas fa-user"></i> Rerestracja</a>
                     }
 
                 </ul>
